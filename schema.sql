@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS opinions;
+CREATE TABLE opinions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    url TEXT NOT NULL
+);
