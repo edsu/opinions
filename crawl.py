@@ -6,16 +6,17 @@ from urlparse import urljoin
 from bs4 import BeautifulSoup
 
 def crawl():
-    for term_page_url in term_pages():
+    for term_page_url in get_term_pages():
         table = get_table(term_page_url)
-        print table
         return
 
-def term_pages():
+def get_term_pages():
     url = "http://www.supremecourt.gov/opinions/opinions.aspx"
     doc = _get(url)
-    for a in doc.findAll('a'):
-        yield urljoin(url, a.get('href'))
+    urls = []
+    for a in doc.select('div.dslist2 ul li a'):
+        urls.append(urljoin(url, a.get('href')))
+    return urls
 
 def get_table(url):
     doc = _get(url)

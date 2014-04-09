@@ -11,3 +11,7 @@ decision and looks for external URLs to use as seeds for web archiving.
 1. pip install -r requirements.txt
 1. python crawl.py
 1. python opinions.py
+
+## License
+
+* CC0

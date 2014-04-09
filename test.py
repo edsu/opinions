@@ -17,6 +17,12 @@ class OpinionTests(unittest.TestCase):
         os.close(self.db_fd)
         os.unlink(opinions.app.config['DATABASE'])
 
+    def test_term_pages(self):
+        term_pages = crawl.get_term_pages()
+        self.assertTrue(len(term_pages) >= 18)
+        self.assertEqual(term_pages[-1], 'http://www.supremecourt.gov/opinions/in-chambers.aspx?Term=08')
+
+
     def test_get_table(self):
         url = 'http://www.supremecourt.gov/opinions/slipopinions.aspx?Term=08'
         table = crawl.get_table(url)
