@@ -1,5 +1,7 @@
 # opinions
 
+[![Build Status](https://travis-ci.org/edsu/opinions.svg)](http://travis-ci.org/edsu/opinions)
+
 opinions is a small Web application that watches the Supreme Court 
 of the United States website for new opinions, downloads the PDFs for each
 decision and looks for external URLs to use as seeds for web archiving. 
