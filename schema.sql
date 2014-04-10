@@ -1,8 +1,22 @@
 DROP TABLE IF EXISTS opinion;
 CREATE TABLE opinion (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    url TEXT NOT NULL
+    created INTEGER NOT NULL,
+    published INTEGER NOT NULL,
+    author_id TEXT NULL,
+    name TEXT NOT NULL,
+    url TEXT NOT NULL,
+    reporter_id TEXT,
+    docket_num TEXT,
+    part_num TEXT
+);
+
+DROP TABLE IF EXISTS url;
+CREATE TABLE url (
+    url TEXT PRIMARY KEY,
+    opinion_url TEXT NOT NULL,
+    created INTEGER NOT NULL,
+    text TEXT
 );
 
 DROP TABLE IF EXISTS author;
@@ -10,6 +24,9 @@ CREATE TABLE author (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL
 );
+
+/* from: http://www.supremecourt.gov/opinions/definitions.aspx */
+
 INSERT INTO author VALUES("A", "Samuel A. Alito, Jr.");
 INSERT INTO author VALUES("AS", "Antonin Scalia");
 INSERT INTO author VALUES("B", "Stephen G. Breyer");
