@@ -39,6 +39,15 @@ def _get(url):
     if resp.status_code == 200:
         return BeautifulSoup(resp.content)
     resp.raise_for_status()
+
+def _opinion_type(url):
+    if 'slipopinions' in url:
+        return 'Slip Opinion'
+    elif 'relatingtoorders' in url:
+        return 'Relating to Order'
+    elif 'in-chambers' in url:
+        return 'In-Chamber'
+    return None
     
 if __name__ == "__main__":
     crawl()
