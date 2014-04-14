@@ -6,7 +6,6 @@ from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 db_uri = 'sqlite:///' + os.path.join(app.root_path, 'opinions.db')
-print db_uri
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 db = SQLAlchemy(app)
 

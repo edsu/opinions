@@ -7,6 +7,9 @@ import unittest
 
 class OpinionTests(unittest.TestCase):
 
+    """
+    TODO: update to use sqlalchemy
+
     def setUp(self):
         self.db_fd, opinions.app.config['DATABASE'] = tempfile.mkstemp()
         opinions.app.config['TESTING'] = True
@@ -16,6 +19,7 @@ class OpinionTests(unittest.TestCase):
     def tearDown(self):
         os.close(self.db_fd)
         os.unlink(opinions.app.config['DATABASE'])
+    """
 
     def test_term_pages(self):
         term_pages = crawl.get_term_pages()
