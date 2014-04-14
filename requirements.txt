@@ -1,3 +1,5 @@
 flask
 requests
 beautifulsoup4
+flask-sqlalchemy
+

@@ -8,7 +8,14 @@ from bs4 import BeautifulSoup
 def crawl():
     for term_page_url in get_term_pages():
         table = get_table(term_page_url)
-        return
+        for row in table:
+            opinion = []
+            opinion_type = _opinion_type(term_page_url)
+            if opinion_type == "slip":
+                opinion = row
+            else:
+                opinion = row
+            print opinion
 
 def get_term_pages():
     url = "http://www.supremecourt.gov/opinions/opinions.aspx"
@@ -42,13 +49,12 @@ def _get(url):
 
 def _opinion_type(url):
     if 'slipopinions' in url:
-        return 'Slip Opinion'
+        return 'slip'
     elif 'relatingtoorders' in url:
-        return 'Relating to Order'
+        return 'comment'
     elif 'in-chambers' in url:
-        return 'In-Chamber'
+        return 'in-chambers'
     return None
     
 if __name__ == "__main__":
     crawl()
-

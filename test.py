@@ -47,5 +47,9 @@ class OpinionTests(unittest.TestCase):
         self.assertEqual(row[5].string, '557/2')
 
 
+    def test_opinion(self):
+        pass
+
+
 if __name__ == "__main__":
     unittest.main()
