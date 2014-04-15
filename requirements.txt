@@ -1,5 +1,5 @@
 flask
-pdfminer
+pdfminer==20140328
 requests
 beautifulsoup4
 flask-sqlalchemy
