@@ -1,4 +1,5 @@
 flask
+pdfminer
 requests
 beautifulsoup4
 flask-sqlalchemy

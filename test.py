@@ -42,7 +42,7 @@ class OpinionTests(unittest.TestCase):
         authors = crawl.get_authors()
         self.assertEqual(len(authors), 11)
         self.assertEqual(authors[0].id, "A")
-        self.assertEqual(authors[0].name, "Associate Justice Samuel A. Alito, Jr.")
+        self.assertEqual(authors[0].name, "Samuel A. Alito, Jr.")
 
     def test_opinion(self):
         crawl.get_authors()
@@ -59,7 +59,15 @@ class OpinionTests(unittest.TestCase):
         self.assertEqual(o.published.year, 2009)
         self.assertEqual(o.published.month, 6)
         self.assertEqual(o.published.day, 29)
-        self.assertEqual(o.author.name, "Associate Justice Anthony M. Kennedy")
+        self.assertEqual(o.author.name, "Anthony M. Kennedy")
+
+
+    def test_extract(self):
+        urls = crawl.extract_urls('test-data/08-1448.pdf')
+        self.assertEqual(len(urls), 24)
+        self.assertEqual(urls[0], 'http://www.ftc.gov/os/2009/12/P994511violententertainment.pdf')
+        self.assertEqual(urls[12], 'http://ssnat.com')
+        self.assertEqual(urls[23], 'http://www.youtube.com/watch?v=CFlVfVmvN6k')
 
 
 if __name__ == "__main__":

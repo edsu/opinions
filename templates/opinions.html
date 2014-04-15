@@ -1,8 +1,9 @@
-<!doctype html>
-<html>
-  <head>
-  </head>
-  <body>
-    Hi
-  </body>
-</html>
+{% extends "layout.html" %}
+
+{% block content %}
+  <ul>
+    {% for opinion in opinions %}
+    <li><a href="{{ opinion.url }}">{{ opinion.name }}</a></li>
+    {% endfor %}
+  </ul>
+{% endblock %}

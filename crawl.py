@@ -28,18 +28,21 @@ def get_opinions(term_page_url):
         url = urlparse.urljoin(term_page_url, row[3].get("href"))
         published = datetime.datetime.strptime(row[1].text, "%m/%d/%y")
 
-        o = opinions.Opinion(
-            type = opinion_type,
-            created = datetime.datetime.now(),
-            published = published,
-            name = name,
-            url = url,
-            reporter_id = row[0].text,
-            docket_num = row[2].text,
-            part_num = row[5].text,
-            author_id = row[4].text
-        )
-        opinions.db.session.add(o)
+        o = opinions.Opinion.query.filter_by(url=url).first()
+        if not o:
+            o = opinions.Opinion(
+                type = opinion_type,
+                created = datetime.datetime.now(),
+                published = published,
+                name = name,
+                url = url,
+                reporter_id = row[0].text,
+                docket_num = row[2].text,
+                part_num = row[5].text,
+                author_id = row[4].text
+            )
+            opinions.db.session.add(o)
+
         opinion_list.append(o)
 
     opinions.db.session.commit()
@@ -73,12 +76,12 @@ def get_html_table(url):
 
 
 def get_authors():
-    url = "http://www.supremecourt.gov/opinions/definitions_c.aspx"
+    url = "http://www.supremecourt.gov/opinions/definitions.aspx"
     doc = _get(url)
-    p = doc.select('blockquote p')[0]
     authors = []
-    for line in p.text.split("\n"):
+    for line in doc.select('blockquote p')[0].text.split("\n"):
         id, name = line.split(": ")
+        name = re.sub('(Associate|Chief) Justice ?', '', name)
         a = opinions.Author.query.get(id)
         if not a:
             a = opinions.Author(id=id, name=name)
@@ -87,6 +90,43 @@ def get_authors():
 
     opinions.db.session.commit()
     return authors
+
+
+def extract_urls(pdf_file):
+    from StringIO import StringIO
+    from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+    from pdfminer.converter import TextConverter
+    from pdfminer.layout import LAParams
+    from pdfminer.pdfpage import PDFPage
+
+    fp = file(pdf_file, 'rb')
+    laparams = LAParams()
+    rsrcmgr = PDFResourceManager(caching=True)
+    outtype = 'text'
+    codec = 'utf-8'
+    outfp = StringIO()
+    pagenos = set()
+    device = TextConverter(rsrcmgr, outfp, codec=codec, laparams=laparams)
+    interpreter = PDFPageInterpreter(rsrcmgr, device)
+    
+    for page in PDFPage.get_pages(fp, pagenos, maxpages=0, caching=True,
+            check_extractable=True):
+        interpreter.process_page(page)
+
+    GRUBER_URLINTEXT_PAT = re.compile(ur'(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?\xab\xbb\u201c\u201d\u2018\u2019]))')
+    urls = []
+    text = outfp.getvalue()
+
+    open('text', 'w').write(text)
+    text = re.sub('(http[^ ]+[^.]) +\n', r'\g<1>', text)
+    text = re.sub('([^.])\n', r'\g<1>', text)
+    open('text2', 'w').write(text)
+
+    for match in GRUBER_URLINTEXT_PAT.findall(text):
+        urls.append(match[0])
+
+    return urls
+
 
 
 def _get(url):

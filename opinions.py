@@ -51,12 +51,14 @@ class Author(db.Model):
 
 @app.route('/')
 def opinions():
-    return flask.render_template('opinions.html')
+    opinions = Opinion.query.order_by(Opinion.published.desc()).all()
+    return flask.render_template('home.html', opinions=opinions)
 
 
 def init():
     db_uri = 'sqlite:///' + os.path.join(app.root_path, 'opinions.db')
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+    app.config['DEBUG'] = True
     db.create_all()
 
 
