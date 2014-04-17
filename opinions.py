@@ -3,6 +3,7 @@
 import os
 import flask
 
+from sqlalchemy import func, select, desc
 from flask.ext.sqlalchemy import SQLAlchemy
 
 
@@ -15,7 +16,7 @@ class Opinion(db.Model):
     created = db.Column(db.DateTime)
     published = db.Column(db.DateTime)
     name = db.Column(db.Text)
-    url = db.Column(db.Text, unique=True)
+    pdf_url = db.Column(db.Text)
     reporter_id = db.Column(db.Text)
     docket_num = db.Column(db.Text)
     part_num = db.Column(db.Text)
@@ -29,15 +30,18 @@ class Opinion(db.Model):
             if hasattr(self, name):
                 setattr(self, name, value)
 
+    def __repr__(self):
+        d = self.published.strftime("%Y-%m-%d")
+        return "%s (%s) <%s>" % (self.name, d, self.pdf_url)
 
-class Url(db.Model):
-    url = db.Column(db.Text, primary_key=True)
+
+class ExternalUrl(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.Text)
     created = db.Column(db.DateTime)
-    text = db.Column(db.Text)
-
     opinion_id = db.Column(db.Integer, db.ForeignKey('opinion.id'))
     opinion = db.relationship('Opinion', 
-        backref=db.backref('urls', lazy='dynamic'))
+        backref=db.backref('external_urls', lazy='dynamic'))
 
 
 class Author(db.Model):
@@ -52,7 +56,22 @@ class Author(db.Model):
 @app.route('/')
 def opinions():
     opinions = Opinion.query.order_by(Opinion.published.desc()).all()
-    return flask.render_template('home.html', opinions=opinions)
+    return flask.render_template('opinions.html', opinions=opinions)
+
+@app.route('/urls/')
+def urls():
+    urls = ExternalUrl.query.join(Opinion).order_by(Opinion.published.desc())
+    return flask.render_template('urls.html', urls=urls)
+
+@app.route('/authors/')
+def authors():
+    q = (select([Author.name, func.count(ExternalUrl.id).label("urls")]).
+         where(Author.id == Opinion.author_id).
+         where(Opinion.id == ExternalUrl.opinion_id).
+         group_by(Author.name).
+         order_by(desc("urls")))
+    rows = db.session.query(q)
+    return flask.render_template('authors.html', rows=rows)
 
 
 def init():

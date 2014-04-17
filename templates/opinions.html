@@ -1,9 +1,24 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <ul>
-    {% for opinion in opinions %}
-    <li><a href="{{ opinion.url }}">{{ opinion.name }}</a></li>
-    {% endfor %}
-  </ul>
+  <div class="row">
+    <table>
+      <tr>
+        <th>Date</th>
+        <th>Name</th>
+        <th>Author</th>
+        <th>Type</th>
+        <th>URLs</th>
+      </tr>
+      {% for opinion in opinions %}
+      <tr>
+        <td>{{ opinion.published.strftime("%Y-%m-%d") }}</td>
+        <td><a href="{{ opinion.pdf_url }}">{{ opinion.name }}</a></td>
+        <td>{{ opinion.author.name }}</td>
+        <td>{{ opinion.type }}</td>
+        <td class="text-right">{{ opinion.external_urls.count() }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
 {% endblock %}

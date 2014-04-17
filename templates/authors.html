@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <div class="row">
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>URLs</th>
+      </tr>
+      {% for row in rows %}
+      <tr>
+        <td>{{ row[0] }}</td>
+        <td class="text-right">{{ row[1] }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+{% endblock %}
