@@ -1,7 +1,52 @@
+body {
+  font-family: 'EB Garamond', serif;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-top: 10px;
+}
+
+a {
+  color: black;
+  border-bottom: thin solid black;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
 a:hover {
-    color: red;
+  background-color: yellow;
+  color: black;
+}
+
+header img {
+  vertical-align: top;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+  
+header {
+  font-family: 'EB Garamond', serif;
+  font-weight: bold;
+  font-size: 30pt;
+  vertical-align: top;
+  text-align: center;
+}
+
+header a:hover {
+    background-color: white;
+}
+
+header a {
+    border-bottom: none;
 }
 
 th {
   text-align: left;
+}
+
+p {
+  font-size: 16pt;
+}
+
+#author-chart {
+  text-align: center;
 }
