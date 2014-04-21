@@ -42,6 +42,7 @@ class ExternalUrl(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.Text)
     created = db.Column(db.DateTime)
+    hostname = db.Column(db.Text)
     opinion_id = db.Column(db.Integer, db.ForeignKey('opinion.id'))
     opinion = db.relationship('Opinion', 
         backref=db.backref('external_urls', lazy='dynamic'))

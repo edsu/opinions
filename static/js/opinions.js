@@ -11,7 +11,6 @@ function drawAuthorChart() {
       .innerRadius(radius - 70);
 
   var pie = d3.layout.pie()
-      .sort(null)
       .value(function(d) { return d.urls; });
 
   var svg = d3.select("#author-chart").append("svg")

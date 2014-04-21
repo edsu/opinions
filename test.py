@@ -88,6 +88,26 @@ class OpinionTests(unittest.TestCase):
         self.assertEqual(len(urls), 1)
         self.assertEqual(urls[0], 'http://example.com/foo')
 
+    def test_extra_period(self):
+        text = 'http://example.com/123.html.\nfoo'
+        urls = crawl.get_urls_from_text(text)
+        self.assertEqual(len(urls), 1)
+        self.assertEqual(urls[0], 'http://example.com/123.html')
+
+    def test_three_lines(self):
+        text = 'http://example.com/123\n/456/789/\n012.html '
+        urls = crawl.get_urls_from_text(text)
+        self.assertEqual(len(urls), 1)
+        self.assertEqual(urls[0], 'http://example.com/123/456/789/012.html')
+
+    def test_trailing_punctuation(self):
+        urls = crawl.get_urls_from_text('http://example.com/foo.')
+        self.assertEqual(urls[0], 'http://example.com/foo')
+        urls = crawl.get_urls_from_text('http://example.com/foo;')
+        self.assertEqual(urls[0], 'http://example.com/foo')
+        urls = crawl.get_urls_from_text('http://example.com/foo,')
+        self.assertEqual(urls[0], 'http://example.com/foo')
+
 if __name__ == "__main__":
     logging.basicConfig(filename="test.log", level="INFO")
     unittest.main()

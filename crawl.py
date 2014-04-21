@@ -3,6 +3,7 @@
 
 import io
 import re
+import sys
 import urllib
 import logging
 import datetime
@@ -67,7 +68,12 @@ def get_opinions(term_page_url, parse_pdf=True):
                 for url in extract_urls(pdf_url):
                     e = opinions.ExternalUrl.query.filter_by(url=url, opinion=o).first()
                     if not e:
-                        e = opinions.ExternalUrl(url=url, opinion=o)
+                        u = urlparse.urlparse(url)
+                        e = opinions.ExternalUrl(
+                            url=url, 
+                            opinion=o,
+                            hostname=u.netloc
+                        )
                         opinions.db.session.add(e)
                         opinions.db.session.commit()
                         logging.info("found url: %s", url)
@@ -142,12 +148,24 @@ def get_text_from_pdf(fh):
     return outfp.getvalue().decode('utf8')
 
 def get_urls_from_text(text):
-    # try to only merge lines that seem to end with a url + some whitespace
-    # but squash the whitespace when merging the lines ... ugh
+    # imperfect heuristics for massaging the text so we can get urls out 
+    # in a fairly predictable manner
+    text = remove_newlines(text)
+    urls = re.findall('http:[^ ]+', text)
+    urls = squish(urls)
+    urls = remove_weird_extensions(urls)
+    urls = remove_trailing_punctuation(urls)
+    return urls
+
+def remove_newlines(text):
+    # any lines that are all non-whitespace are glued on to other lines
+    text = re.sub('\n([^ ]+)[\n]+', '\g<1>', text)
+    # remove newlines that appear in the middle of a url
     text = re.sub(r'(http[^ \n]+)[ \n]*\n', '\g<1>', text)
-    return squish(re.findall('http:[^ ]+', text))
+    return text
 
 def squish(urls):
+    return urls
     new_urls = []
     for url in urls:
         if not url.startswith('http') and len(new_urls) > 0:
@@ -157,7 +175,31 @@ def squish(urls):
                 new_urls.pop()
                 url = combined_url
         new_urls.append(url)
-    new_urls = [u.strip('.') for u in new_urls]
+    return new_urls
+
+def remove_trailing_punctuation(urls):
+    new_urls = []
+    for url in urls:
+        url = re.sub('[.;,]+$', '', url)
+        new_urls.append(url)
+    return new_urls
+
+def remove_weird_extensions(urls):
+    """
+    Turn urls like http://www.ovw.usdoj.gov/domviolence.htm.5 into
+    http://www.ovw.usdoj.gov/domviolence.htm by assuming basnames with
+    multiple periods are incorrect, and only the first two should be used.
+    """
+    new_urls = []
+    for url in urls:
+        u = urlparse.urlparse(url)
+        path_parts = u.path.split('/')
+        if u.netloc and len(path_parts) > 0:
+            dotted_parts = path_parts[-1].split('.')
+            path_parts[-1] = '.'.join(dotted_parts[0:2])
+            new_path = '/'.join(path_parts)
+            url = url.replace(u.path, new_path)
+        new_urls.append(url)
     return new_urls
 
 def get(url):
@@ -176,7 +218,14 @@ def get_opinion_type(url):
     return None
 
 if __name__ == "__main__":
-    logging.basicConfig(filename="crawl.log", level="INFO")
-    opinions.init()
-    get_authors()
-    crawl()
+    if len(sys.argv) == 1:
+        logging.basicConfig(filename="crawl.log", level="INFO")
+        opinions.init()
+        get_authors()
+        crawl()
+    else:
+        pdf_url = sys.argv[1]
+        opinions.init()
+        for url in extract_urls(pdf_url):
+            print url
+
