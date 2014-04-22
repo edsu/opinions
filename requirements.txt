@@ -1,5 +1,5 @@
 flask
-psycopg
+psycopg2
 gunicorn
 pdfminer==20140328
 requests
