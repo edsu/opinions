@@ -43,6 +43,7 @@ class ExternalUrl(db.Model):
     url = db.Column(db.Text)
     created = db.Column(db.DateTime)
     hostname = db.Column(db.Text)
+    internet_archive = db.Column(db.Text)
     opinion_id = db.Column(db.Integer, db.ForeignKey('opinion.id'))
     opinion = db.relationship('Opinion', 
         backref=db.backref('external_urls', lazy='dynamic'))
@@ -56,7 +57,7 @@ class Author(db.Model):
         self.name = name
 
 
-# define some web application routes
+# web app
 
 @app.route('/')
 def home():
