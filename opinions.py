@@ -101,7 +101,11 @@ def authors_csv():
 # run the webapp
 
 def init():
-    db_uri = 'sqlite:///' + os.path.join(app.root_path, 'opinions.db')
+    if 'HEROKU_POSTGRESQL_CYAN_URL' in os.environ:
+        db_uri = os.environ['HEROKU_POSTGRESQL_CYAN_URL']
+    else:
+        db_uri = 'sqlite:///' + os.path.join(app.root_path, 'opinions.db')
+
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     app.config['DEBUG'] = True
     db.create_all()

@@ -1,6 +1,7 @@
 flask
+psycopg
+gunicorn
 pdfminer==20140328
 requests
 beautifulsoup4
 flask-sqlalchemy
-

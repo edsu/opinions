@@ -65,16 +65,12 @@ class OpinionTests(unittest.TestCase):
         self.assertEqual(urls[23], 'http://www.youtube.com/watch?v=CFlVfVmvN6k')
 
     def test_weird_encoding(self):
-        pdf_url = 'http://www.supremecourt.gov/opinions/12pdf/11-1160_1824.pdf'
-        urls = crawl.extract_urls(pdf_url)
+        urls = crawl.extract_urls('http://www.supremecourt.gov/opinions/12pdf/11-1160_1824.pdf')
         self.assertEqual(type(urls[0]), unicode)
 
     def test_multiline_url(self):
-        text = 'online at http://www.ovw.\n\nusdoj.gov/domviolence.htm'
-        urls = crawl.get_urls_from_text(text)
-        self.assertEqual(len(urls), 1)
-        url = urls[0]
-        self.assertEqual(url, 'http://www.ovw.usdoj.gov/domviolence.htm')
+        urls = crawl.get_urls_from_text('online at http://www.ovw.\n\nusdoj.gov/domviolence.htm')
+        self.assertEqual(urls[0], 'http://www.ovw.usdoj.gov/domviolence.htm')
 
     def test_multiline_with_spaces(self):
         text = 'http://youtube.com?  \nv=123456 toodle'
@@ -89,15 +85,11 @@ class OpinionTests(unittest.TestCase):
         self.assertEqual(urls[0], 'http://example.com/foo')
 
     def test_extra_period(self):
-        text = 'http://example.com/123.html.\nfoo'
-        urls = crawl.get_urls_from_text(text)
-        self.assertEqual(len(urls), 1)
+        urls = crawl.get_urls_from_text('http://example.com/123.html.\nfoo')
         self.assertEqual(urls[0], 'http://example.com/123.html')
 
     def test_three_lines(self):
-        text = 'http://example.com/123\n/456/789/\n012.html '
-        urls = crawl.get_urls_from_text(text)
-        self.assertEqual(len(urls), 1)
+        urls = crawl.get_urls_from_text('http://example.com/123\n/456/789/\n012.html ')
         self.assertEqual(urls[0], 'http://example.com/123/456/789/012.html')
 
     def test_trailing_punctuation(self):
