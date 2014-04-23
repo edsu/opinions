@@ -25,7 +25,7 @@ class Opinion(db.Model):
     docket_num = db.Column(db.Text)
     part_num = db.Column(db.Text)
 
-    author_id = db.Column(db.Integer, db.ForeignKey('author.id'))
+    author_id = db.Column(db.String(5), db.ForeignKey('author.id'))
     author = db.relationship('Author',
         backref=db.backref('opinions', lazy='dynamic'))
 
@@ -45,7 +45,7 @@ class ExternalUrl(db.Model):
     hostname = db.Column(db.Text)
     internet_archive = db.Column(db.Text)
     opinion_id = db.Column(db.Integer, db.ForeignKey('opinion.id'))
-    opinion = db.relationship('Opinion', 
+    opinion = db.relationship('Opinion',
         backref=db.backref('external_urls', lazy='dynamic'))
 
 class Author(db.Model):
@@ -85,11 +85,13 @@ def authors():
 
 @app.route('/authors.csv')
 def authors_csv():
-    q = (select([Author.id, Author.name, func.count(ExternalUrl.id).label("urls")]).
+    q = (select([Author.id, Author.name,
+        func.count(ExternalUrl.id).label("urls")]).
          where(Author.id == Opinion.author_id).
          where(Opinion.id == ExternalUrl.opinion_id).
          group_by(Author.name, Author.id).
-         order_by(desc("urls")))
+         order_by(desc("urls")).
+         alias())
     cursor = db.session.query(q)
     results = ['"id","name",urls']
     for row in cursor:
@@ -102,13 +104,16 @@ def authors_csv():
 # run the webapp
 
 def init():
+    # try to use postgres but fall back to sqlite
     if 'HEROKU_POSTGRESQL_CYAN_URL' in os.environ:
         db_uri = os.environ['HEROKU_POSTGRESQL_CYAN_URL']
+    elif 'POSTGRESQL_DB' in os.environ:
+        db_uri = os.environ['POSTGRESQL_DB']
     else:
         db_uri = 'sqlite:///' + os.path.join(app.root_path, 'opinions.db')
 
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-    app.config['DEBUG'] = True
+    app.config['DEBUG'] = os.environ.get("DEBUG", False)
     db.create_all()
 
 if __name__ == "__main__":
