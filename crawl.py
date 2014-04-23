@@ -214,7 +214,6 @@ if __name__ == "__main__":
     logger.setLevel("INFO")
 
     while True:
-        opinions.init()
         get_authors()
         crawl()
 

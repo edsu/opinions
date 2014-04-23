@@ -6,10 +6,18 @@ import flask
 from sqlalchemy import func, select, desc
 from flask.ext.sqlalchemy import SQLAlchemy
 
-# create our app
+# create/config our app
 
 app = flask.Flask(__name__)
 db = SQLAlchemy(app)
+
+if 'DATABASE_URL' in os.environ:
+    db_uri = os.environ['DATABASE_URL']
+else:
+    db_uri = 'sqlite:///' + os.path.join(app.root_path, 'opinions.db')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+app.config['DEBUG'] = os.environ.get("DEBUG", False)
 
 
 # database models
@@ -100,19 +108,6 @@ def authors_csv():
     return flask.Response('\n'.join(results), mimetype='text/csv')
 
 
-
-# run the webapp
-
-def init():
-    if 'DATABASE_URL' in os.environ:
-        db_uri = os.environ['DATABASE_URL']
-    else:
-        db_uri = 'sqlite:///' + os.path.join(app.root_path, 'opinions.db')
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-    app.config['DEBUG'] = os.environ.get("DEBUG", False)
-    db.create_all()
-
 if __name__ == "__main__":
-    init()
+    db.create_all()
     app.run()
