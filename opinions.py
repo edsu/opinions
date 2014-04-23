@@ -104,11 +104,8 @@ def authors_csv():
 # run the webapp
 
 def init():
-    # try to use postgres but fall back to sqlite
-    if 'HEROKU_POSTGRESQL_CYAN_URL' in os.environ:
-        db_uri = os.environ['HEROKU_POSTGRESQL_CYAN_URL']
-    elif 'POSTGRESQL_DB' in os.environ:
-        db_uri = os.environ['POSTGRESQL_DB']
+    if 'DATABASE_URL' in os.environ:
+        db_uri = os.environ['DATABASE_URL']
     else:
         db_uri = 'sqlite:///' + os.path.join(app.root_path, 'opinions.db')
 

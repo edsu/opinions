@@ -4,6 +4,7 @@
 import io
 import re
 import sys
+import time
 import urllib
 import logging
 import datetime
@@ -19,6 +20,7 @@ from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 
 
 UA = "Opinions <http://github.com/edsu/opinions>"
+SLEEP_BETWEEN_CRAWLS = 60
 
 def crawl():
     for term_page_url in get_term_pages():
@@ -204,13 +206,17 @@ def get_opinion_type(url):
     return None
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        logging.basicConfig(filename="crawl.log", level="INFO")
+    # daemon that basically crawls, sleeps, and then crawls again ...
+   
+    # heroku likes log messages going to stdout
+    logger = logging.getLogger()
+    logger.addHandler(logging.StreamHandler(sys.stdout))
+    logger.setLevel("INFO")
+
+    while True:
         opinions.init()
         get_authors()
         crawl()
-    else:
-        pdf_url = sys.argv[1]
-        opinions.init()
-        for url in extract_urls(pdf_url):
-            print url
+
+        logging.info("sleeping %s", SLEEP_BETWEEN_CRAWLS)
+        time.sleep(SLEEP_BETWEEN_CRAWLS)
