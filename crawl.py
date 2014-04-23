@@ -24,6 +24,14 @@ def crawl():
     for term_page_url in get_term_pages():
         get_opinions(term_page_url)
 
+def get_term_pages():
+    url = "http://www.supremecourt.gov/opinions/opinions.aspx"
+    doc = get(url)
+    urls = []
+    for a in doc.select('div.dslist2 ul li a'):
+        urls.append(urlparse.urljoin(url, a.get('href')))
+    return urls
+
 def get_opinions(term_page_url, parse_pdf=True):
     logging.info("fetching opinions from %s", term_page_url)
     table = get_html_table(term_page_url)
@@ -85,14 +93,6 @@ def get_opinions(term_page_url, parse_pdf=True):
 
     return opinion_list
 
-def get_term_pages():
-    url = "http://www.supremecourt.gov/opinions/opinions.aspx"
-    doc = get(url)
-    urls = []
-    for a in doc.select('div.dslist2 ul li a'):
-        urls.append(urlparse.urljoin(url, a.get('href')))
-    return urls
-
 def get_html_table(url):
     doc = get(url)
     table = []
@@ -152,7 +152,6 @@ def get_urls_from_text(text):
     # in a fairly predictable manner
     text = remove_newlines(text)
     urls = re.findall('http:[^ ]+', text)
-    urls = squish(urls)
     urls = remove_weird_extensions(urls)
     urls = remove_trailing_punctuation(urls)
     return urls
@@ -164,19 +163,6 @@ def remove_newlines(text):
     text = re.sub(r'(http[^ \n]+)[ \n]*\n', '\g<1>', text)
     return text
 
-def squish(urls):
-    return urls
-    new_urls = []
-    for url in urls:
-        if not url.startswith('http') and len(new_urls) > 0:
-            combined_url = new_urls[-1] + url
-            u = urlparse.urlparse(combined_url)
-            if u.netloc:
-                new_urls.pop()
-                url = combined_url
-        new_urls.append(url)
-    return new_urls
-
 def remove_trailing_punctuation(urls):
     new_urls = []
     for url in urls:
@@ -187,7 +173,7 @@ def remove_trailing_punctuation(urls):
 def remove_weird_extensions(urls):
     """
     Turn urls like http://www.ovw.usdoj.gov/domviolence.htm.5 into
-    http://www.ovw.usdoj.gov/domviolence.htm by assuming basnames with
+    http://www.ovw.usdoj.gov/domviolence.htm by assuming basenames with
     multiple periods are incorrect, and only the first two should be used.
     """
     new_urls = []
@@ -228,4 +214,3 @@ if __name__ == "__main__":
         opinions.init()
         for url in extract_urls(pdf_url):
             print url
-
