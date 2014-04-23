@@ -6,15 +6,8 @@ body {
 }
 
 a {
-  color: black;
-  border-bottom: thin solid black;
-  padding-left: 2px;
-  padding-right: 2px;
-}
-
-a:hover {
-  background-color: yellow;
-  color: black;
+    color: black;
+    text-decoration: underline;
 }
 
 header img {
@@ -33,11 +26,11 @@ header {
 }
 
 header a:hover {
-    background-color: white;
+    color: red;
 }
 
 header a {
-    border-bottom: none;
+    text-decoration: none;
 }
 
 th {
