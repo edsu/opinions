@@ -20,7 +20,7 @@ from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 
 
 UA = "Opinions <http://github.com/edsu/opinions>"
-SLEEP_BETWEEN_CRAWLS = 60
+SLEEP_BETWEEN_CRAWLS = 60 * 60 * 24 
 
 def crawl():
     for term_page_url in get_term_pages():
