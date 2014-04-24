@@ -6,11 +6,14 @@ opinions is a small Web application that watches the Supreme Court of the United
 
 ## Install
 
+These instructions should get you going using sqlite as the database:
+
 1. sudo apt-get install python python-pip virtualenvwrapper
 1. mkvirtualenv opinions
 1. pip install -r requirements.txt
-1. python crawl.py
-1. python opinions.py
+1. python test.py
+1. python opinions.py # starts the webapp on http://localhost:5000
+1. python crawl.py # starts up the crawl daemon
 
 ## License
 
