@@ -81,15 +81,10 @@ def urls():
     urls = ExternalUrl.query.join(Opinion).order_by(Opinion.published.desc())
     return flask.render_template('urls.html', urls=urls)
 
-@app.route('/authors/')
-def authors():
-    q = (select([Author.name, func.count(ExternalUrl.id).label("urls")]).
-         where(Author.id == Opinion.author_id).
-         where(Opinion.id == ExternalUrl.opinion_id).
-         group_by(Author.name).
-         order_by(desc("urls")))
-    rows = db.session.query(q)
-    return flask.render_template('authors.html', rows=rows)
+@app.route('/author/<author_id>')
+def author(author_id):
+    urls = ExternalUrl.query.join(Opinion).order_by(Opinion.published.desc()).filter(Opinion.author_id == author_id)
+    return flask.render_template('author.html', urls=urls)
 
 @app.route('/authors.csv')
 def authors_csv():
@@ -101,7 +96,7 @@ def authors_csv():
          order_by(desc("urls")).
          alias())
     cursor = db.session.query(q)
-    results = ['"id","name",urls']
+    results = ['id,name,urls']
     for row in cursor:
         results.append('"%s","%s",%s' % row)
 

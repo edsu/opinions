@@ -5,13 +5,15 @@
     <table>
       <tr>
         <th>URL</th>
-        <th>Date Published</th>
+        <th>Published</th>
+        <th>Author</th>
         <th>Opinion</th>
       </tr>
       {% for u in urls %}
       <tr>
-        <td><a href="{{ u.url }}">{{ u.url }}</a></td>
+        <td width="200"><a href="{{ u.url }}">{{ u.url }}</a></td>
         <td>{{ u.opinion.published.strftime("%Y-%m-%d") }}</td>
+        <td><a href="{{ url_for('author', author_id=u.opinion.author.id) }}">{{ u.opinion.author.name }}</a></td>
         <td><a href="{{ u.opinion.pdf_url }}">{{ u.opinion.name }}</a></td>
       </tr>
       {% endfor %}

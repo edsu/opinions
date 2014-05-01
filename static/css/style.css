@@ -11,10 +11,9 @@ a {
 }
 
 header img {
-  vertical-align: top;
+  vertical-align: middle;
   margin-left: 20px;
   margin-right: 20px;
-  margin-bottom: 40px;
 }
   
 header {
@@ -43,4 +42,23 @@ p {
 
 #author-chart {
   text-align: center;
+}
+
+#pie {
+}
+
+#legend {
+  margin-left: 5%;
+}
+
+.legend-text {
+  cursor: pointer;
+}
+
+table {
+    word-wrap: break-word;
+}
+
+table td {
+    vertical-align: top;
 }
