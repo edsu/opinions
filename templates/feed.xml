@@ -15,7 +15,9 @@
         <title>{{ opinion.name }}</title>
         <link rel="alternate" href="{{ opinion.pdf_url }}" type="application/pdf" />
         <updated>{{ opinion.published_rfc3339() }}</updated>
-        <author>{{ opinion.author.name }}</author>
+        <author>
+            <name>{{ opinion.author.name }}</name>
+        </author>
         <content type="xhtml">
             <div xmlns="http://www.w3.org/1999/xhtml">
                 <p><a href="{{ opinion.pdf_url }}">{{ opinion.name }}</a> authored by <a href="http://{{ host }}/author/{{ opinion.author.id }}/">{{ opinion.author.name }}</a> was published on {{ opinion.published.strftime('%b %d, %Y') }}.</p>
