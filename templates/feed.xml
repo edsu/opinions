@@ -26,7 +26,7 @@
                     It appears to contain the follow URL(s):
                     <ul>
                         {% for url in opinion.external_urls %}
-                        <li><a href="{{ url.url }}">{{ url.url }}</a></li>
+                        <li><a href="{{ url.url_cleaned() }}">{{ url.url_cleaned() }}</a></li>
                         {% endfor %} 
                     </ul>
                 </p>

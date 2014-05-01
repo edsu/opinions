@@ -60,6 +60,9 @@ class ExternalUrl(db.Model):
     opinion = db.relationship('Opinion',
         backref=db.backref('external_urls', lazy='dynamic'))
 
+    def url_cleaned(self):
+        return self.url.strip()
+
 class Author(db.Model):
     id = db.Column(db.String(5), primary_key=True)
     name = db.Column(db.Text)
