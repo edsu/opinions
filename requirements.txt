@@ -1,5 +1,5 @@
 flask
-rfc3339
+rfc3339==5
 psycopg2
 gunicorn
 pdfminer==20140328
