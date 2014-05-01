@@ -63,6 +63,31 @@ class Author(db.Model):
     def __init__(self, id=None, name=None):
         self.id = id
         self.name = name
+    
+    def urls(self):
+        return ExternalUrl.query.join(Opinion).join(Author).order_by(Opinion.published.desc()).filter(Opinion.author_id == self.id)
+
+    def url_ratio(self):
+        return "%02.1f" % (self.urls().count() / float(self.opinions.count()))
+
+    def wikipedia_url(self):
+        # TODO: maybe put these in the db?
+        w = {
+            'DS': 'https://en.wikipedia.org/wiki/David_Souter',
+            'T': 'https://en.wikipedia.org/wiki/Clarence_thomas',
+            'JS': 'https://en.wikipedia.org/wiki/John_Paul_Stephens',
+            'G': 'https://en.wikipedia.org/wiki/Ruth_Bader_Ginsburg',
+            'B': 'https://en.wikipedia.org/wiki/Stephen_Breyer',
+            'A': 'https://en.wikipedia.org/wiki/Samuel_alito',
+            'R': 'https://en.wikipedia.org/wiki/John_g_roberts',
+            'AS': 'https://en.wikipedia.org/wiki/Antonin_Scalia',
+            'K': 'https://en.wikipedia.org/wiki/Anthony_Kennedy',
+            'SS': 'https://en.wikipedia.org/wiki/Sonia_Sotomayor',
+            'EK': 'https://en.wikipedia.org/wiki/Elana_Kagan'
+        }
+        if self.id in w:
+            return w[self.id]
+        return None
 
 
 # web app
@@ -73,7 +98,7 @@ def home():
 
 @app.route('/opinions/')
 def opinions():
-    opinions = Opinion.query.order_by(Opinion.published.desc()).all()
+    opinions = Opinion.query.join(Author).order_by(Opinion.published.desc()).all()
     return flask.render_template('opinions.html', opinions=opinions)
 
 @app.route('/urls/')
@@ -83,8 +108,9 @@ def urls():
 
 @app.route('/author/<author_id>')
 def author(author_id):
+    author = Author.query.get(author_id)
     urls = ExternalUrl.query.join(Opinion).join(Author).order_by(Opinion.published.desc()).filter(Opinion.author_id == author_id)
-    return flask.render_template('author.html', urls=urls)
+    return flask.render_template('author.html', urls=urls, author=author)
 
 @app.route('/authors.csv')
 def authors_csv():

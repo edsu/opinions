@@ -1,6 +1,34 @@
 {% extends "layout.html" %}
 
+
 {% block content %}
+
+  <div class="row author-header">
+    <div class="small-6 columns text-right">
+      <a href="{{ author.wikipedia_url() }}">
+        <img src="{{ url_for("static", filename="img/" + author.id + ".jpg") }}">
+      </a>
+    </div>
+    <div class="small-6 columns text-left">
+      <h4><a href="{{ author.wikipedia_url() }}">{{ author.name }}</a></h4>
+      <table>
+        <tr>
+          <td>Opinions Authored</td>
+          <td>{{ author.opinions.count() }}</td>
+        </tr>
+        <tr>
+          <td>Total URLs</td>
+          <td>{{ urls.count() }}</td>
+        </tr>
+        <tr>
+          <td>Average URLs per Opinion</td>
+          <td>{{ author.url_ratio() }}</td>
+      </table>
+    </div>
+  </div>
+  
+  <br>
+
   <div class="row">
     <table>
       <tr>

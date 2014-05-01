@@ -5,11 +5,6 @@ body {
   margin-top: 10px;
 }
 
-a {
-    color: black;
-    text-decoration: underline;
-}
-
 header img {
   vertical-align: middle;
   margin-left: 20px;
@@ -22,6 +17,10 @@ header {
   font-size: 30pt;
   vertical-align: top;
   text-align: center;
+}
+
+header a {
+  color: black;
 }
 
 header a:hover {
@@ -63,3 +62,8 @@ table {
 table td {
     vertical-align: top;
 }
+
+.author-header img {
+  height: 175px;
+}
+
