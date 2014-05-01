@@ -83,7 +83,7 @@ def urls():
 
 @app.route('/author/<author_id>')
 def author(author_id):
-    urls = ExternalUrl.query.join(Opinion).order_by(Opinion.published.desc()).filter(Opinion.author_id == author_id)
+    urls = ExternalUrl.query.join(Opinion).join(Author).order_by(Opinion.published.desc()).filter(Opinion.author_id == author_id)
     return flask.render_template('author.html', urls=urls)
 
 @app.route('/authors.csv')
