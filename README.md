@@ -15,6 +15,8 @@ These instructions should get you going using sqlite as the database:
 1. python opinions.py # starts the webapp on http://localhost:5000
 1. python crawl.py # starts up the crawl daemon
 
+You will see a Procfile is included for running on Heroku.
+
 ## License
 
 * CC0

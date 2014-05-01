@@ -1,2 +1,2 @@
 web: gunicorn opinions:app
-#worker: python crawl.py
+worker: python crawl.py
