@@ -61,7 +61,8 @@ class ExternalUrl(db.Model):
         backref=db.backref('external_urls', lazy='dynamic'))
 
     def url_cleaned(self):
-        return self.url.strip()
+        mpa = dict.fromkeys(range(32))
+        return self.url.translate(mpa)
 
 class Author(db.Model):
     id = db.Column(db.String(5), primary_key=True)
