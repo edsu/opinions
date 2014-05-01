@@ -1,0 +1,31 @@
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>SCOTUS Bookmarks</title>
+    <link rel="self" href="{{ feed_url }}" />
+    <id>{{ feed_url }}</id>
+    <updated>{{ updated.strftime("%Y-%m-%dT%H:%M:%S") }}</updated>
+
+    {% for opinion in opinions.items %}
+    <entry>
+        <title>{{ opinion.name }}</title>
+        <link rel="alternate" href="{{ opinion.pdf_url }}" type="application/pdf" />
+        <updated>{{ opinion.published }}</updated>
+        <author>{{ opinion.author.name }}</author>
+        <content type="xhtml">
+            <div xmlns="http://www.w3.org/1999/xhtml">
+                <p><a href="{{ opinion.pdf_url }}">{{ opinion.name }}</a> authored by <a href="http://{{ host }}/author/{{ opinion.author.id }}/">{{ opinion.author.name }}</a> was published on {{ opinion.published.strftime('%b %d, %Y') }}.</p>
+                {% if opinion.external_urls.count() > 0 %}
+                <p>
+                    It appears to contain the follow URL(s):
+                    <ul>
+                        {% for url in opinion.external_urls %}
+                        <li><a href="{{ url.url }}">{{ url.url }}</a></li>
+                        {% endfor %} 
+                    </ul>
+                </p>
+                {% endif %}
+            </div>
+        </content>
+    </entry>
+    {% endfor %}
+
+</feed>

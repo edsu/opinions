@@ -4,14 +4,14 @@
   <div class="row">
     <table>
       <tr>
-        <th>URL</th>
-        <th>Published</th>
-        <th>Author</th>
-        <th>Opinion</th>
+        <th width="40%">URL</th>
+        <th width="10%">Published</th>
+        <th width="15%">Author</th>
+        <th width="35%">Opinion</th>
       </tr>
       {% for u in urls %}
       <tr>
-        <td width="200"><a href="{{ u.url }}">{{ u.url }}</a></td>
+        <td><a href="{{ u.url }}">{{ u.url|wordwrap(60, wrapstring="<br>")|safe }}</a></td>
         <td>{{ u.opinion.published.strftime("%Y-%m-%d") }}</td>
         <td><a href="{{ url_for('author', author_id=u.opinion.author.id) }}">{{ u.opinion.author.name }}</a></td>
         <td><a href="{{ u.opinion.pdf_url }}">{{ u.opinion.name }}</a></td>

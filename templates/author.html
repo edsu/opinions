@@ -30,7 +30,8 @@
   <br>
 
   <div class="row">
-    <table>
+    <h3>URLs</h3>
+    <table width="100%">
       <tr>
         <th>URL</th>
         <th>Date Published</th>
@@ -38,7 +39,7 @@
       </tr>
       {% for u in urls %}
       <tr>
-        <td><a href="{{ u.url }}">{{ u.url }}</a></td>
+        <td><a href="{{ u.url }}">{{ u.url|wordwrap(80, wrapstring="<br>")|safe }}</a></td>
         <td>{{ u.opinion.published.strftime("%Y-%m-%d") }}</td>
         <td><a href="{{ u.opinion.pdf_url }}">{{ u.opinion.name }}</a></td>
       </tr>

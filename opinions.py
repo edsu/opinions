@@ -4,7 +4,7 @@ import os
 import flask
 
 from sqlalchemy import func, select, desc
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.sqlalchemy import SQLAlchemy, Pagination
 
 # create/config our app
 
@@ -106,7 +106,7 @@ def urls():
     urls = ExternalUrl.query.join(Opinion).order_by(Opinion.published.desc())
     return flask.render_template('urls.html', urls=urls)
 
-@app.route('/author/<author_id>')
+@app.route('/author/<author_id>/')
 def author(author_id):
     author = Author.query.get(author_id)
     urls = ExternalUrl.query.join(Opinion).join(Author).order_by(Opinion.published.desc()).filter(Opinion.author_id == author_id)
@@ -127,6 +127,18 @@ def authors_csv():
         results.append('"%s","%s",%s' % row)
 
     return flask.Response('\n'.join(results), mimetype='text/csv')
+
+@app.route('/feed/')
+def feed():
+    opinions = Opinion.query.join(Author).outerjoin(ExternalUrl).order_by(desc(Opinion.created))
+    opinions = opinions.paginate(1, 50)
+    host = flask.request.headers['Host']
+    feed_url = 'http://' + host + '/feed/'
+    updated = opinions.items[0].created
+
+    xml = flask.render_template('feed.xml', opinions=opinions, 
+            feed_url=feed_url, updated=updated)
+    return flask.Response(xml, mimetype='application/atom+xml')
 
 
 if __name__ == "__main__":
