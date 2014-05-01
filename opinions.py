@@ -2,6 +2,7 @@
 
 import os
 import flask
+import rfc3339
 
 from sqlalchemy import func, select, desc
 from flask.ext.sqlalchemy import SQLAlchemy, Pagination
@@ -36,6 +37,9 @@ class Opinion(db.Model):
     author_id = db.Column(db.String(5), db.ForeignKey('author.id'))
     author = db.relationship('Author',
         backref=db.backref('opinions', lazy='dynamic'))
+
+    def published_rfc3339(self):
+        return rfc3339.rfc3339(self.published)
 
     def __init__(self, **kwargs):
         for name, value in kwargs.items():
@@ -130,14 +134,17 @@ def authors_csv():
 
 @app.route('/feed/')
 def feed():
-    opinions = Opinion.query.join(Author).outerjoin(ExternalUrl).order_by(desc(Opinion.created))
+    opinions = Opinion.query.join(Author).outerjoin(ExternalUrl).order_by(desc(Opinion.published))
     opinions = opinions.paginate(1, 50)
     host = flask.request.headers['Host']
     feed_url = 'http://' + host + '/feed/'
-    updated = opinions.items[0].created
+
+    last_opinion = Opinion.query.order_by(desc(Opinion.created)).first()
+    updated = rfc3339.rfc3339(last_opinion.created)
 
     xml = flask.render_template('feed.xml', opinions=opinions, 
-            feed_url=feed_url, updated=updated)
+        feed_url=feed_url, updated=updated)
+
     return flask.Response(xml, mimetype='application/atom+xml')
 
 

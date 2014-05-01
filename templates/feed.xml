@@ -2,13 +2,19 @@
     <title>SCOTUS Bookmarks</title>
     <link rel="self" href="{{ feed_url }}" />
     <id>{{ feed_url }}</id>
-    <updated>{{ updated.strftime("%Y-%m-%dT%H:%M:%S") }}</updated>
+    <updated>{{ updated }}</updated>
+    <author>
+        <name>Ed Summers</name>
+        <uri>http://inkdroid.org</uri>
+        <email>ehs@pobox.com</email>
+    </author>
 
     {% for opinion in opinions.items %}
     <entry>
+        <id>{{ opinion.pdf_url }}</id>
         <title>{{ opinion.name }}</title>
         <link rel="alternate" href="{{ opinion.pdf_url }}" type="application/pdf" />
-        <updated>{{ opinion.published }}</updated>
+        <updated>{{ opinion.published_rfc3339() }}</updated>
         <author>{{ opinion.author.name }}</author>
         <content type="xhtml">
             <div xmlns="http://www.w3.org/1999/xhtml">
