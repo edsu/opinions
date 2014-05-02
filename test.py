@@ -9,12 +9,8 @@ class OpinionTests(unittest.TestCase):
 
     def setUp(self):
         opinions.app.config['TESTING'] = True
-        self.db_fd, opinions.app.config['SQL_DATABASE_URI'] = tempfile.mkstemp()
+        opinions.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
         opinions.db.create_all()
-
-    def tearDown(self):
-        os.close(self.db_fd)
-        os.unlink(opinions.app.config['SQL_DATABASE_URI'])
 
     def test_term_pages(self):
         term_pages = crawl.get_term_pages()
