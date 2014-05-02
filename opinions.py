@@ -114,6 +114,15 @@ def urls():
     urls = ExternalUrl.query.join(Opinion).order_by(Opinion.published.desc())
     return flask.render_template('urls.html', urls=urls)
 
+@app.route('/urls.csv')
+def urls_csv():
+    def generate():
+        for u in ExternalUrl.query.join(Opinion).order_by(Opinion.published.desc()):
+            row = [u.url, u.opinion.name, u.opinion.published, u.opinion.author.name]
+            row = ['"%s"' % s for s in row]
+            yield ','.join(row) + "\n"
+    return flask.Response(generate(), mimetype="text/csv")
+
 @app.route('/author/<author_id>/')
 def author(author_id):
     author = Author.query.get(author_id)
