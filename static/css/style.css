@@ -55,6 +55,14 @@ p {
   cursor: pointer;
 }
 
+.legend-bar {
+  cursor: pointer;
+}
+
+.arc {
+  cursor: pointer;
+}
+
 table {
     word-wrap: break-word;
 }

@@ -22,6 +22,15 @@ function drawAuthorChart() {
     .append("g")
       .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
+  function clickAuthor(d) {
+    if (d.data) { 
+      id = d.data.id;
+    } else {
+      id = d.id;
+    }
+    window.location.href = "/author/" + id;
+  }
+
   // fetch the data
   
   d3.csv("authors.csv", function(error, data) {
@@ -31,7 +40,8 @@ function drawAuthorChart() {
     var g = svg.selectAll(".arc")
         .data(pie(data))
       .enter().append("g")
-        .attr("class", "arc");
+        .attr("class", "arc")
+        .on("click", clickAuthor);
 
     g.append("path")
         .attr("d", arc)
@@ -50,9 +60,11 @@ function drawAuthorChart() {
           return "translate(0," + i * 20 + ")"; });
 
     legend.append("rect")
+        .attr("class", "legend-bar")
         .attr("width", 18)
         .attr("height", 18)
-        .style("fill", function(d) { return color(d.name); });
+        .style("fill", function(d) { return color(d.name); })
+        .on("click", clickAuthor);
 
     legend.append("text")
         .attr("x", 24)
@@ -61,9 +73,8 @@ function drawAuthorChart() {
         .attr("class", "legend-text")
         .attr("id", function(d) { return "legend-text-" + d.id; })
         .text(function(d) { return d.name; })
-        .on("click", function(d) { 
-          window.location.href = "/author/" + d.id;
-        })
+        .on("click", clickAuthor)
+
         .on("mouseover", function(d) {
           d3.select("#legend-text-" + d.id)
             .attr("fill", "blue");
